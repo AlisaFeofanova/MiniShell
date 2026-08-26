@@ -4,7 +4,7 @@
 
 This project is developed by a team of two students.
 
-### Developer 1 — Lexer / Parser / Expansion
+### Developer 1 — Lexer / Parser / Expansion (Alisa)
 
 Main responsibilities:
 
@@ -19,7 +19,7 @@ Main responsibilities:
 * `$?`
 * Preparing the command structure for the Executor
 
-### Developer 2 — Executor / Processes / Builtins
+### Developer 2 — Executor / Processes / Builtins (Christian)
 
 Main responsibilities:
 
