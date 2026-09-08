@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ch <chguerre@42lausanne.ch>           +#+  +:+       +#+        */
+/*   By: chguerr <chguerr@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/04 15:19:56 by ch                #+#    #+#             */
-/*   Updated: 2026/09/04 15:26:04 by ch               ###   ########.ch       */
+/*   Created: 2026/09/08 23:27:00 by chguerr           #+#    #+#             */
+/*   Updated: 2026/09/08 23:27:22 by chguerr          ###   ########.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 # include <stdio.h>
 # include <sys/wait.h>
 # include <errno.h>
+# include <fcntl.h>
+# include <readline/readline.h>
+# include <libft.h>
 
 typedef struct s_redir
 {
@@ -28,11 +31,21 @@ typedef struct s_redir
 
 typedef struct s_cmd
 {
-	char				*args;
+	char				**args;
 	char				*path;
 	t_redir				*redir;
-	struct s_command	*next;
+	struct s_cmd		*next;
 
 }	t_cmd;
+
+typedef enum e_redir_type
+{
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND,
+	REDIR_HEREDOC
+}	t_redir_type;
+
+int executor(t_cmd *cmd, char **envp);
 
 #endif // MINISHELL_H
