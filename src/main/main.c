@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: chguerr <chguerr@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/09 00:59:14 by chguerr           #+#    #+#             */
-/*   Updated: 2026/09/09 00:59:59 by chguerr          ###   ########.ch       */
+/*   Created: 2026/09/21 05:11:34 by chguerr           #+#    #+#             */
+/*   Updated: 2026/09/21 05:14:34 by chguerr          ###   ########.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,37 @@ void	create_redir(t_redir *redir, char *path, t_redir *next_redir, int type)
 
 int	main(int argc, char **argv, char **envp)
 {
+	t_cmd	cmd1;
+	t_cmd	cmd2;
+	t_cmd	cmd3;
+	t_redir	redir1;
+	int		code;
+
+	(void)argc;
+	if (argv[1] && argv[1][0] == '1')
+	{
+		create_cmd(&cmd1, NULL, (char *[]){"ls", "-l", NULL},
+			"/usr/bin/ls", NULL);
+		code = executor(&cmd1, envp);
+	}
+	else if (argv[1] && argv[1][0] == '3')
+	{
+		create_redir(&redir1, ft_strdup("FIN"), NULL, REDIR_HEREDOC);
+		create_cmd(&cmd1, &redir1, (char *[]){"cat", NULL},
+			"/usr/bin/cat", &cmd2);
+		create_cmd(&cmd2, NULL, (char *[]){"grep", "h", NULL},
+			"/usr/bin/grep", &cmd3);
+		create_cmd(&cmd3, NULL, (char *[]){"wc", "-l", NULL},
+			"/usr/bin/wc", NULL);
+		code = executor(&cmd1, envp);
+	}
+	else
+		return (write(2, "uso: ./executor 1|3\n", 20), 1);
+	return (code);
+}
+/*
+int	main(int argc, char **argv, char **envp)
+{
 	(void)argc;
 	(void)argv;
 	t_cmd	cmd1;
@@ -49,4 +80,4 @@ int	main(int argc, char **argv, char **envp)
 	create_cmd(&cmd2, &redir2, (char*[]){"grep","h",NULL}, "/usr/bin/grep", NULL);
 	code = executor(&cmd1, envp);
 	return (code);
-}
+}*/

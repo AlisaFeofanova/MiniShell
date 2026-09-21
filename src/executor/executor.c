@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: chguerr <chguerr@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/21 04:43:00 by chguerr           #+#    #+#             */
-/*   Updated: 2026/09/21 04:49:53 by chguerr          ###   ########.ch       */
+/*   Created: 2026/09/21 05:24:28 by chguerr           #+#    #+#             */
+/*   Updated: 2026/09/21 05:32:31 by chguerr          ###   ########.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,6 @@ void heredoc_resolve(t_cmd *cmd, int nb_cmd, int pid)
 	char *path_temp;
 	int i;
 	
-	
-
-
 	current = cmd;
 	
 	i = 0;
@@ -74,13 +71,27 @@ void heredoc_resolve(t_cmd *cmd, int nb_cmd, int pid)
 	}
 }
 
-
+static int count_cmd(t_cmd *cmd)
+{
+	t_cmd	*current;
+	int		count;
+	
+	count = 0;
+	current = cmd;
+	while(current != NULL)
+	{
+		current = current->next;
+		count++;
+	}
+	return (count);
+}
 
 int executor(t_cmd *cmd, char **envp)
 {
-	int nbr_cmd = 2;
+	int nbr_cmd = count_cmd(cmd);
 	int fd[2];
-	pid_t pid[nbr_cmd];
+	pid_t *pid;
+
 	int prev_fd; 
 	int i;
 	t_cmd *current;
@@ -94,6 +105,12 @@ int executor(t_cmd *cmd, char **envp)
 	i = 0;
 	prev_fd = -1;
 	current = cmd;
+	pid = malloc(sizeof(pid_t)*nbr_cmd);
+	if(pid ==NULL)
+	{
+		perror("malloc");
+		return(1);
+	}
 	heredoc_resolve(cmd, nbr_cmd, getpid());
 	while (i < nbr_cmd)
 	{
@@ -103,6 +120,7 @@ int executor(t_cmd *cmd, char **envp)
 			if (pipe(fd) == -1)
 			{
 			perror("pipe");
+			free(pid);
 			return (1);
 			}
 		}
@@ -111,6 +129,7 @@ int executor(t_cmd *cmd, char **envp)
 		if (pid[i] == -1)
 		{
 			perror("fork");
+			free(pid);
 			return (1);
 		}
 		if(pid[i] == 0)
@@ -209,5 +228,6 @@ int executor(t_cmd *cmd, char **envp)
 		}
 		i++;
 	}
+	free(pid);
 	return(code);
 }
