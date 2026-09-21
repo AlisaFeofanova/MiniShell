@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: chguerr <chguerr@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/21 05:24:28 by chguerr           #+#    #+#             */
-/*   Updated: 2026/09/21 05:32:31 by chguerr          ###   ########.ch       */
+/*   Created: 2026/09/21 05:43:32 by chguerr           #+#    #+#             */
+/*   Updated: 2026/09/21 05:58:11 by chguerr          ###   ########.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,30 @@ static int count_cmd(t_cmd *cmd)
 	return (count);
 }
 
+int wait_pid(pid_t *pid, int nb_cmd)
+{
+	int		status;
+	int		i;
+	int 	code;
+	pid_t	caugth_pid;
+
+	i = 0;
+	pid_t last_pid = pid[nb_cmd - 1];
+	while(i < nb_cmd)
+	{	
+		caugth_pid = waitpid(pid[i], &status, 0);
+		if(caugth_pid == last_pid)
+		{
+			if (WIFSIGNALED(status))
+				code = WTERMSIG(status) + 128;
+			else if (WIFEXITED(status) )
+				code = WEXITSTATUS(status);
+		}
+		i++;
+	}
+	return (code);
+}
+
 int executor(t_cmd *cmd, char **envp)
 {
 	int nbr_cmd = count_cmd(cmd);
@@ -95,7 +119,7 @@ int executor(t_cmd *cmd, char **envp)
 	int prev_fd; 
 	int i;
 	t_cmd *current;
-	int status;
+
 	t_redir *node;
 	int fd_redir;
 	int code;
@@ -218,16 +242,7 @@ int executor(t_cmd *cmd, char **envp)
 		}
 		i++;
 	}
-	i = 0;
-	while(i < nbr_cmd)
-	{
-		waitpid(pid[i], &status, 0);
-		if(WIFEXITED(status))
-		{
-			code = WEXITSTATUS(status);
-		}
-		i++;
-	}
+	code = wait_pid(pid, nbr_cmd);
 	free(pid);
 	return(code);
 }

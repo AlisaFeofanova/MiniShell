@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: chguerr <chguerr@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/21 05:11:34 by chguerr           #+#    #+#             */
-/*   Updated: 2026/09/21 05:14:34 by chguerr          ###   ########.ch       */
+/*   Created: 2026/09/21 05:40:16 by chguerr           #+#    #+#             */
+/*   Updated: 2026/09/21 05:40:21 by chguerr          ###   ########.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,13 @@ int	main(int argc, char **argv, char **envp)
 			"/usr/bin/grep", &cmd3);
 		create_cmd(&cmd3, NULL, (char *[]){"wc", "-l", NULL},
 			"/usr/bin/wc", NULL);
+		code = executor(&cmd1, envp);
+	}
+	else if (argv[1] && argv[1][0] == '2')
+	{
+		create_cmd(&cmd1, NULL,
+			(char *[]){"sh", "-c", "kill -SEGV $$", NULL},
+			"/bin/sh", NULL);
 		code = executor(&cmd1, envp);
 	}
 	else
