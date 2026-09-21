@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: chguerr <chguerr@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/09 00:35:53 by chguerr           #+#    #+#             */
-/*   Updated: 2026/09/09 00:56:12 by chguerr          ###   ########.ch       */
+/*   Created: 2026/09/21 04:43:00 by chguerr           #+#    #+#             */
+/*   Updated: 2026/09/21 04:49:53 by chguerr          ###   ########.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,22 @@ int executor(t_cmd *cmd, char **envp)
 	heredoc_resolve(cmd, nbr_cmd, getpid());
 	while (i < nbr_cmd)
 	{
-		pipe(fd);
+		
+		if (i < nbr_cmd - 1)
+		{
+			if (pipe(fd) == -1)
+			{
+			perror("pipe");
+			return (1);
+			}
+		}
 		node = current->redir;
 		pid[i] = fork();
+		if (pid[i] == -1)
+		{
+			perror("fork");
+			return (1);
+		}
 		if(pid[i] == 0)
 		{
 			if(prev_fd != -1)
